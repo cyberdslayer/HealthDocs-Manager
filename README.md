@@ -2,6 +2,13 @@
 
 A full-stack web application for managing medical documents (PDFs). Patients can upload, view, download, and delete their medical documents through a clean and intuitive interface.
 
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/31523297-176e-49ac-8cdd-02f622de55e9" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/49d1c225-358b-4109-a8c7-83ff31403645" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ce319414-17d9-49bb-8d73-dc671486f378" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/70eb7c99-4673-4241-aa27-40b6666d5dcc" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a4f39037-78a3-4a21-a665-ee3c01f852ae" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2037c93f-2035-4481-8c42-44e8feb7edc9" />
+
 ## 📋 Table of Contents
 
 - [Features](#features)
