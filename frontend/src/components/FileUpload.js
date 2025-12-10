@@ -70,15 +70,15 @@ function FileUpload({ onUpload, loading }) {
 
   return (
     <div className="mb-10 pb-10 border-b-2 border-gray-200">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">📤 Upload Medical Document</h2>
+      <h2 className="text-h2 mb-6">📤 Upload Medical Document</h2>
       
       <form onSubmit={handleSubmit} className="w-full">
         <div
           className={`relative border-3 border-dashed rounded-xl p-10 text-center transition-all duration-300 ${
             dragActive 
-              ? 'border-purple-600 bg-indigo-50 scale-[1.02]' 
-              : 'border-indigo-300 bg-gray-50 hover:bg-indigo-50 hover:border-indigo-500'
-          } ${error ? 'border-red-400 bg-red-50' : ''}`}
+              ? 'border-[color:var(--color-primary-500)] bg-[color:var(--color-primary-50)] scale-[1.02]' 
+              : 'border-[color:var(--color-primary-100)] bg-[color:var(--color-gray-50)] hover:bg-[color:var(--color-primary-50)] hover:border-[color:var(--color-primary-500)]'
+          } ${error ? 'border-[color:var(--color-error)] bg-[color:var(--color-error-bg)]' : ''}`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
@@ -90,9 +90,9 @@ function FileUpload({ onUpload, loading }) {
             {selectedFile ? '📄' : '📂'}
           </div>
           
-          <p className="text-xl text-gray-800 mb-3 font-medium">
+          <p className="text-body mb-3 font-medium">
             {selectedFile ? (
-              <span className="text-indigo-700 font-bold">{selectedFile.name}</span>
+              <span className="text-[color:var(--color-primary-700)] font-bold">{selectedFile.name}</span>
             ) : (
               'Drag and drop your PDF here'
             )}
@@ -100,10 +100,10 @@ function FileUpload({ onUpload, loading }) {
           
           {!selectedFile && (
             <>
-              <p className="text-gray-600 my-4 text-lg">or</p>
+              <p className="text-body my-4">or</p>
               <label 
                 htmlFor="fileInput" 
-                className="inline-block px-8 py-3 bg-indigo-600 text-white rounded-lg cursor-pointer font-bold text-lg transition-all duration-300 hover:bg-indigo-700 hover:shadow-lg focus-within:ring-4 focus-within:ring-indigo-300"
+                className="btn bg-[color:var(--color-primary-500)] text-white hover:bg-[color:var(--color-primary-700)]"
               >
                 Choose File
               </label>
@@ -121,13 +121,13 @@ function FileUpload({ onUpload, loading }) {
             aria-describedby="file-help"
           />
           
-          <p id="file-help" className="text-gray-500 text-sm mt-4 font-medium">
+          <p id="file-help" className="text-caption mt-4 font-medium">
             PDF files only, max 10MB
           </p>
 
           {/* Inline Error Message */}
           {error && (
-            <div className="mt-4 p-3 bg-red-100 text-red-800 rounded-lg border border-red-200 flex items-center justify-center gap-2 animate-slideIn" role="alert">
+            <div className="mt-4 p-3 bg-[color:var(--color-error-bg)] text-[color:var(--color-error)] rounded-lg border border-[color:var(--color-error)] flex items-center justify-center gap-2 animate-slideIn" role="alert">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
               {error}
             </div>
@@ -136,15 +136,15 @@ function FileUpload({ onUpload, loading }) {
 
         {/* File Preview & Actions */}
         {selectedFile && !error && (
-          <div className="mt-6 bg-white border border-gray-200 rounded-xl p-6 shadow-sm animate-slideIn">
+          <div className="mt-6 bg-white border border-[color:var(--color-gray-400)] rounded-xl p-6 shadow-sm animate-slideIn">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
-                <div className="bg-red-100 p-3 rounded-lg">
+                <div className="bg-[color:var(--color-primary-50)] p-3 rounded-lg">
                   <span className="text-2xl">📄</span>
                 </div>
                 <div>
-                  <p className="font-bold text-gray-800 text-lg">{selectedFile.name}</p>
-                  <p className="text-gray-500">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="font-bold text-[color:var(--color-gray-900)] text-lg">{selectedFile.name}</p>
+                  <p className="text-caption">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
                 </div>
               </div>
               
@@ -152,7 +152,7 @@ function FileUpload({ onUpload, loading }) {
                 <button
                   type="button"
                   onClick={clearSelection}
-                  className="flex-1 sm:flex-none px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold transition-colors"
+                  className="btn bg-[color:var(--color-gray-100)] text-[color:var(--color-gray-700)] hover:bg-[color:var(--color-gray-400)]"
                   disabled={loading}
                 >
                   Change File
@@ -160,10 +160,10 @@ function FileUpload({ onUpload, loading }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`flex-1 sm:flex-none px-6 py-2 text-white rounded-lg font-bold text-lg shadow-md transition-all ${
+                  className={`btn bg-[color:var(--color-primary-500)] text-white hover:bg-[color:var(--color-primary-700)] ${
                     loading 
-                      ? 'bg-gray-400 cursor-not-allowed' 
-                      : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-lg hover:-translate-y-0.5'
+                      ? 'opacity-50 cursor-not-allowed' 
+                      : ''
                   }`}
                 >
                   {loading ? (
@@ -183,7 +183,7 @@ function FileUpload({ onUpload, loading }) {
             
             {loading && (
               <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4 overflow-hidden">
-                <div className="bg-green-500 h-2.5 rounded-full animate-pulse w-full"></div>
+                <div className="bg-[color:var(--color-primary-500)] h-2.5 rounded-full animate-pulse w-full"></div>
               </div>
             )}
           </div>

@@ -5,14 +5,14 @@ const ConfirmDialog = ({ isOpen, onClose, onConfirm, title, message, confirmText
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <div className="space-y-6">
-        <p className="text-gray-600 text-lg">
+        <p className="text-body">
           {message}
         </p>
         
         <div className="flex flex-col sm:flex-row gap-3 sm:justify-end mt-6">
           <button
             onClick={onClose}
-            className="px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors text-lg"
+            className="btn bg-[color:var(--color-gray-100)] text-[color:var(--color-gray-700)] hover:bg-[color:var(--color-gray-400)]"
           >
             {cancelText}
           </button>
@@ -21,10 +21,10 @@ const ConfirmDialog = ({ isOpen, onClose, onConfirm, title, message, confirmText
               onConfirm();
               onClose();
             }}
-            className={`px-6 py-3 font-bold text-white rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors text-lg ${
+            className={`btn ${
               isDestructive 
-                ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500' 
-                : 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500'
+                ? 'btn-danger' 
+                : 'bg-[color:var(--color-primary-500)] text-white hover:bg-[color:var(--color-primary-700)]'
             }`}
           >
             {confirmText}

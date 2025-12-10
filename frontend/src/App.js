@@ -105,27 +105,27 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-10">
+    <div className="min-h-screen bg-[color:var(--color-gray-50)] pb-10">
       {/* Navigation Header */}
-      <nav className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-30">
+      <nav className="bg-white shadow-sm border-b border-[color:var(--color-gray-400)] sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20">
             <div className="flex items-center gap-3">
-              <div className="bg-indigo-600 p-2 rounded-lg">
+              <div className="bg-[color:var(--color-primary-500)] p-2 rounded-lg">
                 <span className="text-2xl" role="img" aria-label="Hospital">🏥</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 leading-none">Patient Portal</h1>
-                <p className="text-sm text-slate-500 font-medium">Secure Document Management</p>
+                <h1 className="text-h2 leading-none">Patient Portal</h1>
+                <p className="text-caption font-medium">Secure Document Management</p>
               </div>
             </div>
             <div className="flex items-center">
               <div className="hidden md:flex items-center gap-4">
                 <div className="text-right mr-2">
-                  <p className="text-sm font-bold text-slate-900">Welcome Back</p>
-                  <p className="text-xs text-slate-500">Patient ID: #883920</p>
+                  <p className="text-sm font-bold text-[color:var(--color-gray-900)]">Welcome Back</p>
+                  <p className="text-xs text-[color:var(--color-gray-400)]">Patient ID: #883920</p>
                 </div>
-                <div className="h-10 w-10 rounded-full bg-indigo-100 border-2 border-indigo-200 flex items-center justify-center text-indigo-700 font-bold">
+                <div className="h-10 w-10 rounded-full bg-[color:var(--color-primary-100)] border-2 border-[color:var(--color-primary-100)] flex items-center justify-center text-[color:var(--color-primary-700)] font-bold">
                   JD
                 </div>
               </div>
@@ -136,7 +136,7 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-10 min-h-[600px]">
+        <div className="bg-white rounded-2xl shadow-xl border border-[color:var(--color-gray-100)] p-6 md:p-10 min-h-[600px]">
           <FileUpload onUpload={handleUpload} loading={loading} />
           
           <div className="mt-12">

@@ -26,7 +26,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[color:var(--color-overlay)] backdrop-blur-sm"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -38,13 +38,13 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         ref={modalRef}
         tabIndex="-1"
       >
-        <div className="flex justify-between items-center p-6 border-b border-gray-100">
-          <h3 id="modal-title" className="text-xl font-bold text-gray-900">
+        <div className="flex justify-between items-center p-6 border-b border-[color:var(--color-gray-400)]">
+          <h3 id="modal-title" className="text-h2">
             {title}
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-full p-1"
+            className="text-[color:var(--color-gray-400)] hover:text-[color:var(--color-gray-700)] focus:outline-none focus:ring-2 focus:ring-[color:var(--color-primary-500)] rounded-full p-1"
             aria-label="Close modal"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
