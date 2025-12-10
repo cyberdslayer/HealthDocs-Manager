@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import FileUpload from './components/FileUpload';
 import DocumentList from './components/DocumentList';
+import Toast from './components/Toast';
+import ConfirmDialog from './components/ConfirmDialog';
 import api from './services/api';
 
 function App() {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const [toast, setToast] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+    isDestructive: false
+  });
 
   // Fetch documents on component mount
   useEffect(() => {
@@ -21,7 +30,7 @@ function App() {
       const data = await api.getDocuments();
       setDocuments(data.documents);
     } catch (error) {
-      showMessage('Error fetching documents', 'error');
+      showToast('Error fetching documents. Please try again later.', 'error');
       console.error('Error:', error);
     } finally {
       setLoading(false);
@@ -33,10 +42,10 @@ function App() {
     setLoading(true);
     try {
       const result = await api.uploadDocument(file);
-      showMessage(result.message, 'success');
+      showToast(result.message, 'success');
       fetchDocuments(); // Refresh the list
     } catch (error) {
-      showMessage(error.message || 'Error uploading file', 'error');
+      showToast(error.message || 'Error uploading file. Please ensure it is a valid PDF.', 'error');
       console.error('Upload error:', error);
     } finally {
       setLoading(false);
@@ -47,69 +56,118 @@ function App() {
   const handleDownload = async (id, filename) => {
     try {
       await api.downloadDocument(id, filename);
-      showMessage('File downloaded successfully', 'success');
+      showToast('File downloaded successfully', 'success');
     } catch (error) {
-      showMessage('Error downloading file', 'error');
+      showToast('Error downloading file. Please try again.', 'error');
       console.error('Download error:', error);
     }
   };
 
-  // Handle file delete
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this document?')) {
-      return;
-    }
+  // Handle file delete request (opens dialog)
+  const handleDeleteRequest = (id, filename) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Delete Document?',
+      message: `Are you sure you want to delete "${filename}"? This action cannot be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Keep File',
+      isDestructive: true,
+      onConfirm: () => executeDelete(id)
+    });
+  };
 
+  // Execute the actual delete
+  const executeDelete = async (id) => {
     setLoading(true);
     try {
       const result = await api.deleteDocument(id);
-      showMessage(result.message, 'success');
+      showToast(result.message, 'success');
       fetchDocuments(); // Refresh the list
     } catch (error) {
-      showMessage('Error deleting file', 'error');
+      showToast('Error deleting file. Please try again.', 'error');
       console.error('Delete error:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Show message to user
-  const showMessage = (text, type) => {
-    setMessage({ text, type });
-    setTimeout(() => setMessage({ text: '', type: '' }), 5000);
+  // Show toast message
+  const showToast = (message, type = 'info') => {
+    setToast({ message, type });
+  };
+
+  const closeToast = () => {
+    setToast(null);
+  };
+
+  const closeConfirmDialog = () => {
+    setConfirmDialog(prev => ({ ...prev, isOpen: false }));
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <header className="text-center text-white mb-10 p-10 bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl">
-        <h1 className="text-5xl md:text-6xl font-bold mb-3">🏥 Patient Portal</h1>
-        <p className="text-xl md:text-2xl opacity-90">Manage Your Medical Documents</p>
-      </header>
-
-      <main className="bg-white rounded-3xl p-8 md:p-10 shadow-2xl mb-8">
-        {message.text && (
-          <div className={`p-4 rounded-lg mb-6 font-medium animate-slideIn ${
-            message.type === 'success' 
-              ? 'bg-green-100 text-green-800 border border-green-300' 
-              : 'bg-red-100 text-red-800 border border-red-300'
-          }`}>
-            {message.text}
+    <div className="min-h-screen bg-[color:var(--color-gray-50)] pb-10">
+      {/* Navigation Header */}
+      <nav className="bg-white shadow-sm border-b border-[color:var(--color-gray-400)] sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-20">
+            <div className="flex items-center gap-3">
+              <div className="bg-[color:var(--color-primary-500)] p-2 rounded-lg">
+                <span className="text-2xl" role="img" aria-label="Hospital">🏥</span>
+              </div>
+              <div>
+                <h1 className="text-h2 leading-none">Patient Portal</h1>
+                <p className="text-caption font-medium">Secure Document Management</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <div className="hidden md:flex items-center gap-4">
+                <div className="text-right mr-2">
+                  <p className="text-sm font-bold text-[color:var(--color-gray-900)]">Welcome Back</p>
+                  <p className="text-xs text-[color:var(--color-gray-400)]">Patient ID: #883920</p>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-[color:var(--color-primary-100)] border-2 border-[color:var(--color-primary-100)] flex items-center justify-center text-[color:var(--color-primary-700)] font-bold">
+                  JD
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
+      </nav>
 
-        <FileUpload onUpload={handleUpload} loading={loading} />
-
-        <DocumentList
-          documents={documents}
-          onDownload={handleDownload}
-          onDelete={handleDelete}
-          loading={loading}
-        />
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="bg-white rounded-2xl shadow-xl border border-[color:var(--color-gray-100)] p-6 md:p-10 min-h-[600px]">
+          <FileUpload onUpload={handleUpload} loading={loading} />
+          
+          <div className="mt-12">
+            <DocumentList 
+              documents={documents} 
+              onDownload={handleDownload} 
+              onDelete={handleDeleteRequest}
+              loading={loading}
+            />
+          </div>
+        </div>
       </main>
 
-      <footer className="text-center text-white py-6 opacity-80">
-        <p>© 2025 Patient Portal - Secure Medical Document Management</p>
-      </footer>
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={closeToast} 
+        />
+      )}
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={closeConfirmDialog}
+        onConfirm={confirmDialog.onConfirm}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        confirmText={confirmDialog.confirmText}
+        cancelText={confirmDialog.cancelText}
+        isDestructive={confirmDialog.isDestructive}
+      />
     </div>
   );
 }
