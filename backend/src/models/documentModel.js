@@ -1,44 +1,8 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const db = require('../config/db');
 
-// Database file path
-const DB_PATH = path.join(__dirname, 'database.sqlite');
-
-// Create database connection
-const db = new sqlite3.Database(DB_PATH, (err) => {
-  if (err) {
-    console.error('Error opening database:', err.message);
-  } else {
-    console.log('Connected to SQLite database');
-    initializeDatabase();
-  }
-});
-
-// Initialize database schema
-function initializeDatabase() {
-  const createTableSQL = `
-    CREATE TABLE IF NOT EXISTS documents (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      filename TEXT NOT NULL,
-      filepath TEXT NOT NULL,
-      filesize INTEGER NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `;
-
-  db.run(createTableSQL, (err) => {
-    if (err) {
-      console.error('Error creating table:', err.message);
-    } else {
-      console.log('Documents table initialized');
-    }
-  });
-}
-
-// Database operations
-const dbOperations = {
+const DocumentModel = {
   // Insert a new document
-  insertDocument: (filename, filepath, filesize) => {
+  create: (filename, filepath, filesize) => {
     return new Promise((resolve, reject) => {
       const sql = `INSERT INTO documents (filename, filepath, filesize) VALUES (?, ?, ?)`;
       
@@ -60,7 +24,7 @@ const dbOperations = {
   },
 
   // Get all documents
-  getAllDocuments: () => {
+  findAll: () => {
     return new Promise((resolve, reject) => {
       const sql = `SELECT * FROM documents ORDER BY created_at DESC`;
       
@@ -75,7 +39,7 @@ const dbOperations = {
   },
 
   // Get document by ID
-  getDocumentById: (id) => {
+  findById: (id) => {
     return new Promise((resolve, reject) => {
       const sql = `SELECT * FROM documents WHERE id = ?`;
       
@@ -90,7 +54,7 @@ const dbOperations = {
   },
 
   // Delete document by ID
-  deleteDocument: (id) => {
+  delete: (id) => {
     return new Promise((resolve, reject) => {
       const sql = `DELETE FROM documents WHERE id = ?`;
       
@@ -105,4 +69,4 @@ const dbOperations = {
   }
 };
 
-module.exports = dbOperations;
+module.exports = DocumentModel;
