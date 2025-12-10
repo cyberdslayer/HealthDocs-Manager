@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 function FileUpload({ onUpload, loading }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
+  const [error, setError] = useState('');
+  const fileInputRef = useRef(null);
 
   // Handle file selection
   const handleFileChange = (e) => {
@@ -12,13 +14,14 @@ function FileUpload({ onUpload, loading }) {
 
   // Validate file and set state
   const validateAndSetFile = (file) => {
+    setError('');
     if (file) {
       if (file.type !== 'application/pdf') {
-        alert('Please select a PDF file');
+        setError('Only PDF files are allowed. Please select a valid PDF document.');
         return;
       }
       if (file.size > 10 * 1024 * 1024) {
-        alert('File size must be less than 10MB');
+        setError('File size exceeds 10MB limit. Please choose a smaller file.');
         return;
       }
       setSelectedFile(file);
@@ -29,14 +32,12 @@ function FileUpload({ onUpload, loading }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedFile) {
-      alert('Please select a file first');
+      setError('Please select a file to upload.');
       return;
     }
     onUpload(selectedFile);
     setSelectedFile(null);
-    // Reset file input
-    const fileInput = document.getElementById('fileInput');
-    if (fileInput) fileInput.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   // Handle drag events
@@ -61,58 +62,132 @@ function FileUpload({ onUpload, loading }) {
     }
   };
 
+  const clearSelection = () => {
+    setSelectedFile(null);
+    setError('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   return (
     <div className="mb-10 pb-10 border-b-2 border-gray-200">
       <h2 className="text-3xl font-bold text-gray-800 mb-6">📤 Upload Medical Document</h2>
+      
       <form onSubmit={handleSubmit} className="w-full">
         <div
-          className={`border-3 border-dashed rounded-xl p-10 text-center bg-indigo-50 transition-all duration-300 cursor-pointer ${
+          className={`relative border-3 border-dashed rounded-xl p-10 text-center transition-all duration-300 ${
             dragActive 
-              ? 'border-purple-600 bg-indigo-100 scale-105' 
-              : 'border-indigo-500 hover:bg-indigo-100 hover:border-purple-600'
-          }`}
+              ? 'border-purple-600 bg-indigo-50 scale-[1.02]' 
+              : 'border-indigo-300 bg-gray-50 hover:bg-indigo-50 hover:border-indigo-500'
+          } ${error ? 'border-red-400 bg-red-50' : ''}`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
+          role="region"
+          aria-label="File upload drop zone"
         >
-          <div className="text-6xl mb-4">📄</div>
+          <div className="text-6xl mb-4" aria-hidden="true">
+            {selectedFile ? '📄' : '📂'}
+          </div>
+          
           <p className="text-xl text-gray-800 mb-3 font-medium">
-            {selectedFile ? selectedFile.name : 'Drag and drop your PDF here'}
+            {selectedFile ? (
+              <span className="text-indigo-700 font-bold">{selectedFile.name}</span>
+            ) : (
+              'Drag and drop your PDF here'
+            )}
           </p>
-          <p className="text-gray-600 my-4 text-lg">or</p>
-          <label htmlFor="fileInput" className="inline-block px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg cursor-pointer font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg mb-3">
-            Choose File
-          </label>
+          
+          {!selectedFile && (
+            <>
+              <p className="text-gray-600 my-4 text-lg">or</p>
+              <label 
+                htmlFor="fileInput" 
+                className="inline-block px-8 py-3 bg-indigo-600 text-white rounded-lg cursor-pointer font-bold text-lg transition-all duration-300 hover:bg-indigo-700 hover:shadow-lg focus-within:ring-4 focus-within:ring-indigo-300"
+              >
+                Choose File
+              </label>
+            </>
+          )}
+
           <input
             id="fileInput"
+            ref={fileInputRef}
             type="file"
             accept=".pdf,application/pdf"
             onChange={handleFileChange}
-            className="hidden"
+            className="sr-only"
             disabled={loading}
+            aria-describedby="file-help"
           />
-          <p className="text-gray-500 text-sm mt-3">PDF files only, max 10MB</p>
+          
+          <p id="file-help" className="text-gray-500 text-sm mt-4 font-medium">
+            PDF files only, max 10MB
+          </p>
+
+          {/* Inline Error Message */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-100 text-red-800 rounded-lg border border-red-200 flex items-center justify-center gap-2 animate-slideIn" role="alert">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
+              {error}
+            </div>
+          )}
         </div>
 
-        {selectedFile && (
-          <div className="bg-green-50 border border-green-400 rounded-lg p-4 mt-6 text-left">
-            <p className="text-green-800 my-1">
-              <strong>Selected:</strong> {selectedFile.name}
-            </p>
-            <p className="text-green-800 my-1">
-              <strong>Size:</strong> {(selectedFile.size / 1024).toFixed(2)} KB
-            </p>
+        {/* File Preview & Actions */}
+        {selectedFile && !error && (
+          <div className="mt-6 bg-white border border-gray-200 rounded-xl p-6 shadow-sm animate-slideIn">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-4">
+                <div className="bg-red-100 p-3 rounded-lg">
+                  <span className="text-2xl">📄</span>
+                </div>
+                <div>
+                  <p className="font-bold text-gray-800 text-lg">{selectedFile.name}</p>
+                  <p className="text-gray-500">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={clearSelection}
+                  className="flex-1 sm:flex-none px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold transition-colors"
+                  disabled={loading}
+                >
+                  Change File
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`flex-1 sm:flex-none px-6 py-2 text-white rounded-lg font-bold text-lg shadow-md transition-all ${
+                    loading 
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-lg hover:-translate-y-0.5'
+                  }`}
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Uploading...
+                    </span>
+                  ) : (
+                    'Upload Document'
+                  )}
+                </button>
+              </div>
+            </div>
+            
+            {loading && (
+              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4 overflow-hidden">
+                <div className="bg-green-500 h-2.5 rounded-full animate-pulse w-full"></div>
+              </div>
+            )}
           </div>
         )}
-
-        <button
-          type="submit"
-          className="w-full px-6 py-4 mt-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg text-lg font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none active:translate-y-0"
-          disabled={!selectedFile || loading}
-        >
-          {loading ? 'Uploading...' : 'Upload Document'}
-        </button>
       </form>
     </div>
   );
