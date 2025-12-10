@@ -382,19 +382,28 @@ Invoke-RestMethod -Uri "http://localhost:5000/documents/1" -Method Delete
    - Body: Select `form-data`
    - Key: `file` (change type to `File`)
    - Value: Select your PDF file
+   - <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/48b006fa-a7d2-48cb-9055-7cf1b587ac11" />
+
+
 
 2. **List Documents:**
    - Method: `GET`
    - URL: `http://localhost:5000/documents`
+   - <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/b973a0b4-161e-4b6c-a594-aa359eaf5257" />
+
 
 3. **Download Document:**
    - Method: `GET`
    - URL: `http://localhost:5000/documents/1`
-   - Click `Send and Download`
+   - Click `Download`
+   - <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/dfe5f4b4-8700-4f71-8e7c-0626360d0dc7" />
+
 
 4. **Delete Document:**
    - Method: `DELETE`
    - URL: `http://localhost:5000/documents/1`
+   - <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d0f28d3a-4316-4181-9ff7-d2b0c431b20e" />
+
 
 ## 🏗 Architecture
 
@@ -583,7 +592,7 @@ MIT License - Feel free to use this project for learning and development.
 
 ## 👤 Author
 
-Full Stack Developer Intern Assignment
+Shubham Mishra
 
 ---
 
